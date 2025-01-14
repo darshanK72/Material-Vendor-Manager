@@ -1,0 +1,26 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+.sidebar {
+  min-height: 100vh;
+  background-color: #343a40;
+  padding-top: 20px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+}
+
+.sidebar a:hover {
+  background-color: #495057;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.table-actions {
+  white-space: nowrap;
+}

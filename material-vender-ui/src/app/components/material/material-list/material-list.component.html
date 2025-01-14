@@ -1,0 +1,47 @@
+<div class="container mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Material List</h2>
+        <button class="btn btn-primary" (click)="createMaterial()">Create Material</button>
+    </div>
+
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Code</th>
+                <th>Short Description</th>
+                <th>Long Description</th>
+                <th>Unit</th>
+                <th>Reorder Level</th>
+                <th>Min Order Quantity</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let material of paginatedMaterials">
+                <td>{{ material.id }}</td>
+                <td>{{ material.code }}</td>
+                <td>{{ material.shortText }}</td>
+                <td>{{ material.longText || 'N/A' }}</td>
+                <td>{{ material.unit }}</td>
+                <td>{{ material.reorderLevel }}</td>
+                <td>{{ material.minOrderQuantity }}</td>
+                <td>{{ material.isActive ? 'Yes' : 'No' }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-2" (click)="updateMaterial(material.id)">Update</button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteMaterial(material.id)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-secondary btn-sm" [disabled]="currentPage === 1"
+            (click)="previousPage()">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn btn-secondary btn-sm" [disabled]="currentPage === totalPages"
+            (click)="nextPage()">Next</button>
+    </div>
+</div>

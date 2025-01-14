@@ -1,0 +1,38 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Vendor List</h2>
+        <button class="btn btn-primary" (click)="createVendor()">Create Vendor</button>
+      </div>
+      
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Contact Email</th>
+            <th>Contact No</th>
+            <th>Valid Till Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vendor of vendors">
+            <td>{{ vendor.code }}</td>
+            <td>{{ vendor.name }}</td>
+            <td>{{ vendor.contactEmail }}</td>
+            <td>{{ vendor.contactNo }}</td>
+            <td>{{ vendor.validTillDate | date }}</td>
+            <td>{{ vendor.isActive ? 'Active' : 'Inactive' }}</td>
+            <td class="table-actions">
+              <button class="btn btn-sm btn-primary me-2" (click)="editVendor(vendor.id)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteVendor(vendor.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
