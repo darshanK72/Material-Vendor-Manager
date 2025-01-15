@@ -1,1 +1,135 @@
-<p>material-update works!</p>
+<div class="container-fluid py-3">
+    <form [formGroup]="materialUpdateForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Material Update</h2>
+                    <div>
+                        <button type="submit" class="btn btn-primary me-2"
+                            [disabled]="materialUpdateForm.invalid || isSubmitting || isLoading">Save</button>
+                        <button type="button" class="btn btn-secondary" [disabled]="isSubmitting"
+                            (click)="onCancel()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div *ngIf="isLoading" class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="mt-2">Loading material data...</div>
+                </div>
+
+                <div *ngIf="!isLoading" class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Code -->
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Code</label>
+                            <input id="code" type="text" class="form-control" formControlName="code"
+                                [class.is-invalid]="formControls['code'].touched && formControls['code'].invalid" />
+                            <div *ngIf="formControls['code'].touched && formControls['code'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['code'].errors?.['required']">Code is required.</small>
+                                <small *ngIf="formControls['code'].errors?.['maxlength']">Code cannot exceed 50
+                                    characters.</small>
+                            </div>
+                        </div>
+
+                        <!-- Short Text -->
+                        <div class="mb-3">
+                            <label for="shortText" class="form-label">Short Text</label>
+                            <input id="shortText" type="text" class="form-control" formControlName="shortText"
+                                [class.is-invalid]="formControls['shortText'].touched && formControls['shortText'].invalid" />
+                            <div *ngIf="formControls['shortText'].touched && formControls['shortText'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['shortText'].errors?.['required']">Short Text is
+                                    required.</small>
+                                <small *ngIf="formControls['shortText'].errors?.['maxlength']">Short Text cannot exceed
+                                    100 characters.</small>
+                            </div>
+                        </div>
+
+                        <!-- Unit -->
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Unit</label>
+                            <input id="unit" type="text" class="form-control" formControlName="unit"
+                                [class.is-invalid]="formControls['unit'].touched && formControls['unit'].invalid" />
+                            <div *ngIf="formControls['unit'].touched && formControls['unit'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['unit'].errors?.['required']">Unit is required.</small>
+                                <small *ngIf="formControls['unit'].errors?.['maxlength']">Unit cannot exceed 20
+                                    characters.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Long Text -->
+                        <div class="mb-3">
+                            <label for="longText" class="form-label">Long Text</label>
+                            <textarea id="longText" class="form-control" formControlName="longText" rows="2"
+                                [class.is-invalid]="formControls['longText'].touched && formControls['longText'].invalid"></textarea>
+                            <div *ngIf="formControls['longText'].touched && formControls['longText'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['longText'].errors?.['maxlength']">Long Text cannot exceed
+                                    500 characters.</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Reorder Level -->
+                                <div class="mb-3">
+                                    <label for="reorderLevel" class="form-label">Reorder Level</label>
+                                    <input id="reorderLevel" type="number" class="form-control"
+                                        formControlName="reorderLevel"
+                                        [class.is-invalid]="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid" />
+                                    <div *ngIf="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid"
+                                        class="invalid-feedback">
+                                        <small *ngIf="formControls['reorderLevel'].errors?.['required']">Reorder Level
+                                            is required.</small>
+                                        <small *ngIf="formControls['reorderLevel'].errors?.['min']">Reorder Level must
+                                            be at least 0.</small>
+                                        <small *ngIf="formControls['reorderLevel'].errors?.['pattern']">Reorder Level
+                                            must be a valid
+                                            number.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Min Order Quantity -->
+                                <div class="mb-3">
+                                    <label for="minOrderQuantity" class="form-label">Min Order Quantity</label>
+                                    <input id="minOrderQuantity" type="number" class="form-control"
+                                        formControlName="minOrderQuantity"
+                                        [class.is-invalid]="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid" />
+                                    <div *ngIf="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid"
+                                        class="invalid-feedback">
+                                        <small *ngIf="formControls['minOrderQuantity'].errors?.['required']">Min Order
+                                            Quantity is required.</small>
+                                        <small *ngIf="formControls['minOrderQuantity'].errors?.['min']">Min Order
+                                            Quantity must be at least 0.</small>
+                                        <small *ngIf="formControls['minOrderQuantity'].errors?.['pattern']">Min Order
+                                            Quantity must be a valid
+                                            number.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IsActive -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input id="isActive" type="checkbox" class="form-check-input"
+                                    formControlName="isActive" />
+                                <label class="form-check-label" for="isActive">Is Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

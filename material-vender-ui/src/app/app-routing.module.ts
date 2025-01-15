@@ -18,48 +18,42 @@ const routes: Routes = [
   },
   {
     path: 'vendors',
-    component: VendorListComponent,
-    children: [
-      {
-        path: 'create',
-        component: VendorCreateComponent,
-      },
-      {
-        path: 'update',
-        component: VendorUpdateComponent,
-      },
-    ],
+    component: VendorListComponent
+  },
+  {
+    path: 'vendors/create',
+    component: VendorCreateComponent,
+  },
+  {
+    path: 'vendors/update/:id',
+    component: VendorUpdateComponent,
   },
   {
     path: 'materials',
-    component: MaterialListComponent,
-    children: [
-      {
-        path: 'create',
-        component: MaterialCreateComponent,
-      },
-      {
-        path: 'update',
-        component: MaterialUpdateComponent,
-      },
-    ],
+    component: MaterialListComponent
+  },
+  {
+    path: 'materials/create',
+    component: MaterialCreateComponent,
+  },
+  {
+    path: 'materials/update/:id',
+    component: MaterialUpdateComponent,
   },
   {
     path: 'orders',
-    component: OrderListComponent,
-    children: [
-      {
-        path: 'create',
-        component: OrderCreateComponent,
-      },
-      {
-        path: 'update',
-        component: OrderUpdateComponent,
-      }
-    ],
+    component: OrderListComponent
+  }, 
+  {
+    path: 'orders/create',
+    component: OrderCreateComponent,
   },
   {
-    path: 'details/:id',
+    path: 'orders/update/:id',
+    component: OrderUpdateComponent,
+  },
+  {
+    path: 'orders/details/:id',
     component: OrderDetailsComponent,
   },
 ];

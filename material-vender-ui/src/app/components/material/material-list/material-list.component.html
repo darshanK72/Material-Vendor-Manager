@@ -1,7 +1,7 @@
-<div class="container mt-3">
+<div class="container mt-2">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Material List</h2>
-        <button class="btn btn-primary" (click)="createMaterial()">Create Material</button>
+        <button class="btn btn-primary" routerLink="create">Create Material</button>
     </div>
 
     <table class="table table-hover table-bordered">
@@ -36,7 +36,6 @@
         </tbody>
     </table>
 
-    <!-- Pagination Controls -->
     <div class="d-flex justify-content-between align-items-center mt-3">
         <button class="btn btn-secondary btn-sm" [disabled]="currentPage === 1"
             (click)="previousPage()">Previous</button>

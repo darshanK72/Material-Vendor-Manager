@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Material } from 'src/app/models/material.model';
 import { MaterialService } from 'src/app/services/material.service';
 
@@ -14,7 +15,7 @@ export class MaterialListComponent implements OnInit {
   itemsPerPage: number = 5;
   totalPages: number = 1;
 
-  constructor(private materialService:MaterialService) { }
+  constructor(private materialService:MaterialService,private router:Router) { }
   
   ngOnInit(): void {
     this.fetchMaterials();
@@ -48,12 +49,8 @@ export class MaterialListComponent implements OnInit {
     }
   }
 
-  createMaterial(): void {
-    alert('Navigate to the Create Material Page'); // Replace with routing logic
-  }
-
   updateMaterial(materialId: number): void {
-    alert(`Navigate to Update Material Page for Material ID: ${materialId}`); // Replace with routing logic
+    this.router.navigate(['/materials/update', materialId]);
   }
 
   deleteMaterial(materialId: number): void {

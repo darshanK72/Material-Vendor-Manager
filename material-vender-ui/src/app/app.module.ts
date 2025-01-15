@@ -8,12 +8,13 @@ import { MaterialCreateComponent } from './components/material/material-create/m
 import { MaterialUpdateComponent } from './components/material/material-update/material-update.component';
 import { OrderCreateComponent } from './components/order/order-create/order-create.component';
 import { VendorListComponent } from './components/vendor/vendor-list/vendor-list.component';
-import { VendorCreateComponent } from './components/vendor/vendor-create/vendor-create.component';
 import { VendorUpdateComponent } from './components/vendor/vendor-update/vendor-update.component';
 import { OrderUpdateComponent } from './components/order/order-update/order-update.component';
 import { OrderDetailsComponent } from './components/order/order-details/order-details.component';
 import { OrderListComponent } from './components/order/order-list/order-list.component';
 import { HttpClientModule } from '@angular/common/http';
+import { VendorCreateComponent } from './components/vendor/vendor-create/vendor-create.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -26,10 +27,16 @@ import { HttpClientModule } from '@angular/common/http';
     OrderDetailsComponent,
     OrderCreateComponent,
     VendorListComponent,
-    VendorCreateComponent,
     VendorUpdateComponent,
+    VendorCreateComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
