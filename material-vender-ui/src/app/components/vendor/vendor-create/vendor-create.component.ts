@@ -11,6 +11,7 @@ import { VendorService } from 'src/app/services/vender.service';
 export class VendorCreateComponent implements OnInit {
   vendorForm!: FormGroup;
   isSubmitting: boolean = false;
+  nextVendorCode: any = 'VD0001';
 
   constructor(
     private fb: FormBuilder,
@@ -20,6 +21,12 @@ export class VendorCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.vendorService.getNextVendorCode().subscribe(result => {
+      this.nextVendorCode = result.code;
+      this.vendorForm.patchValue({
+        code: this.nextVendorCode
+      })
+    })
   }
 
   private initializeForm(): void {
@@ -28,11 +35,20 @@ export class VendorCreateComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       addressLine1: [''],
       addressLine2: [''],
-      contactEmail: ['', [Validators.email]],
-      contactNo: ['', [Validators.pattern('^[0-9]+$')]],
+      contactEmail: ['', [Validators.required, Validators.email]],
+      contactNo: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]+$'),
+          Validators.maxLength(10),
+        ],
+      ],
       validTillDate: [''],
       isActive: [true, Validators.required],
     });
+
+    this.vendorForm.get('code')?.disable();
   }
 
   get formControls() {

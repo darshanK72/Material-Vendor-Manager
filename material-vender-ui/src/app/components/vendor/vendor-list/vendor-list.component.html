@@ -1,49 +1,57 @@
-<div class="container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Vendor List</h2>
-        <button class="btn btn-primary" routerLink="create">Create Vendor</button>
+<div class="small-font">
+    <div *ngIf="isLoading" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Loading material data...</div>
     </div>
-
-    <table class="table table-hover table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Address Line 1</th>
-                <th>Address Line 2</th>
-                <th>Contact Email</th>
-                <th>Contact No</th>
-                <th>Valid Till</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let vendor of paginatedVendors">
-                <td>{{ vendor.id }}</td>
-                <td>{{ vendor.code }}</td>
-                <td>{{ vendor.name }}</td>
-                <td>{{ vendor.addressLine1 || 'N/A' }}</td>
-                <td>{{ vendor.addressLine2 || 'N/A' }}</td>
-                <td>{{ vendor.contactEmail || 'N/A' }}</td>
-                <td>{{ vendor.contactNo || 'N/A' }}</td>
-                <td>{{ vendor.validTillDate | date: 'yyyy-MM-dd' || 'N/A' }}</td>
-                <td>{{ vendor.isActive ? 'Yes' : 'No' }}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm me-2" (click)="updateVendor(vendor.id)">Update</button>
-                    <button class="btn btn-danger btn-sm" (click)="deleteVendor(vendor.id)">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Pagination Controls -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <button class="btn btn-secondary btn-sm" [disabled]="currentPage === 1"
-            (click)="previousPage()">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button class="btn btn-secondary btn-sm" [disabled]="currentPage === totalPages"
-            (click)="nextPage()">Next</button>
+    <div class="container mt-3" *ngIf="!isLoading">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Vendor List</h2>
+            <button class="btn btn-primary" routerLink="create">Create Vendor</button>
+        </div>
+    
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Address Line 1</th>
+                    <th>Address Line 2</th>
+                    <th>Contact Email</th>
+                    <th>Contact No</th>
+                    <th>Valid Till</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let vendor of paginatedVendors">
+                    <td>{{ vendor.id }}</td>
+                    <td>{{ vendor.code }}</td>
+                    <td>{{ vendor.name }}</td>
+                    <td>{{ vendor.addressLine1 || 'N/A' }}</td>
+                    <td>{{ vendor.addressLine2 || 'N/A' }}</td>
+                    <td>{{ vendor.contactEmail || 'N/A' }}</td>
+                    <td>{{ vendor.contactNo || 'N/A' }}</td>
+                    <td>{{ vendor.validTillDate | date: 'yyyy-MM-dd' || 'N/A' }}</td>
+                    <td>{{ vendor.isActive ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2" (click)="updateVendor(vendor.id)">Update</button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteVendor(vendor.id)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <button class="btn btn-secondary btn-sm" [disabled]="currentPage === 1"
+                (click)="previousPage()">Previous</button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="btn btn-secondary btn-sm" [disabled]="currentPage === totalPages"
+                (click)="nextPage()">Next</button>
+        </div>
     </div>
 </div>

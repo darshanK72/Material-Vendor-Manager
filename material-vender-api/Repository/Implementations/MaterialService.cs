@@ -18,6 +18,20 @@ namespace material_vender_api.Repository.Implementations
             return await _context.Materials.ToListAsync();
         }
 
+        public async Task<string> GetNextMaterialCodeAsync()
+        {
+            var lastMaterial = await _context.Materials
+                                       .OrderBy(m => m.Id)
+                                       .LastOrDefaultAsync();
+
+            int newMaterialId = lastMaterial?.Id + 1 ?? 1;
+
+            string newMaterialCode = $"MAT{newMaterialId:D3}";
+
+            return newMaterialCode;
+        }
+
+
         public async Task<Material> GetMaterialByIdAsync(int id)
         {
             return await _context.Materials.FindAsync(id);
@@ -28,6 +42,17 @@ namespace material_vender_api.Repository.Implementations
             _context.Materials.Add(material);
             await _context.SaveChangesAsync();
             return material;
+        }
+
+        public async Task<bool> AddBulkMaterialsAsync(List<Material> materials)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                await _context.Materials.AddRangeAsync(materials);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            return true;
         }
 
         public async Task<bool> UpdateMaterialAsync(int id, Material material)

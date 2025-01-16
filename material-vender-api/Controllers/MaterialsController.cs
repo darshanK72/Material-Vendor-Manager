@@ -23,6 +23,16 @@ namespace material_vender_api.Controllers
             return Ok(materials);
         }
 
+        [HttpGet("next-material-code")]
+        public async Task<ActionResult<CodeResponse>> GetMaterialNextCode()
+        {
+            var code = await _materialService.GetNextMaterialCodeAsync();
+            return Ok(new CodeResponse()
+            {
+                Code = code,
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Material>> GetMaterial([FromRoute] int id)
         {
@@ -68,6 +78,22 @@ namespace material_vender_api.Controllers
             }
 
             return CreatedAtAction("GetMaterial", new { id = createdMaterial.Id }, createdMaterial);
+        }
+
+        [HttpPost("bulk-create")]
+        public async Task<ActionResult<bool>> PostBulkMaterials(List<Material> materials)
+        {
+            var result = await _materialService.AddBulkMaterialsAsync(materials);
+
+            if (!result)
+            {
+                return BadRequest(new ErrorResponse()
+                {
+                    ErrorMessage = "Failed to create new materials."
+                });
+            }
+
+            return Ok("Created all materials");
         }
 
         [HttpDelete("{id}")]

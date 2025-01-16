@@ -11,8 +11,9 @@ import { MaterialService } from 'src/app/services/material.service';
 export class MaterialListComponent implements OnInit {
   materials: Material[] = [];
   paginatedMaterials: Material[] = [];
+  isLoading: boolean = true;
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 10;
   totalPages: number = 1;
 
   constructor(private materialService:MaterialService,private router:Router) { }
@@ -26,6 +27,7 @@ export class MaterialListComponent implements OnInit {
       this.materials = result;
       this.totalPages = Math.ceil(this.materials.length / this.itemsPerPage);
       this.updatePaginatedMaterials();
+      this.isLoading = false;
     })
   }
 

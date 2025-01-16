@@ -1,1 +1,137 @@
-<p>order-update works!</p>
+<div class="container-fluid py-3">
+    <!-- Order Header Form -->
+    <form [formGroup]="orderHeaderForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Update Purchase Order</h2>
+                    <div>
+                        <button type="submit" class="btn btn-primary me-2" [disabled]="isSubmitting">Update</button>
+                        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Order Header Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="orderNumber" class="form-label">Order No</label>
+                            <input id="orderNumber" type="text" class="form-control" formControlName="orderNumber" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="vendorId" class="form-label">Vendor</label>
+                            <select id="vendorId" class="form-select" formControlName="vendorId">
+                                <option value="">Select Vendor</option>
+                                <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="orderDate" class="form-label">Order Date</label>
+                            <input id="orderDate" type="date" class="form-control" formControlName="orderDate" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea id="notes" class="form-control" formControlName="notes" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Line Entry Form -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ editingLineIndex !== null ? 'Update Material' : 'Add Material' }}</h5>
+                        <form [formGroup]="materialLineForm" class="row g-3 mt-3">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="materialId" class="form-label">Material</label>
+                                    <select id="materialId" class="form-select" formControlName="materialId"
+                                        (change)="onMaterialSelect($event)">
+                                        <option value="">Select Material</option>
+                                        <option *ngFor="let material of materials" [value]="material.id">
+                                            {{ material.code }} - {{ material.shortText }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="itemQuantity" class="form-label">Quantity</label>
+                                    <input id="itemQuantity" type="number" class="form-control"
+                                        formControlName="itemQuantity" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="itemRate" class="form-label">Rate</label>
+                                    <input id="itemRate" type="number" class="form-control"
+                                        formControlName="itemRate" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="expectedDate" class="form-label">Expected Date</label>
+                                    <input id="expectedDate" type="date" class="form-control"
+                                        formControlName="expectedDate" />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-success w-100" (click)="addMaterialLine()">
+                                        {{ editingLineIndex !== null ? 'Update Line' : 'Add Line' }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="itemNotes" class="form-label">Item Notes</label>
+                                        <textarea id="itemNotes" class="form-control" formControlName="itemNotes" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Materials Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Short Text</th>
+                                <th>Unit</th>
+                                <th>Quantity</th>
+                                <th>Rate</th>
+                                <th>Amount</th>
+                                <th>Exp Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let line of orderLines; let i = index">
+                                <td>{{ line?.code }}</td>
+                                <td>{{ line?.shortText }}</td>
+                                <td>{{ line?.unit }}</td>
+                                <td>{{ line.itemQuantity }}</td>
+                                <td>{{ line.itemRate | number:'1.2-2' }}</td>
+                                <td>{{ line.itemQuantity * line.itemRate | number:'1.2-2' }}</td>
+                                <td>{{ line.expectedDate | date:'shortDate' }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger me-1"
+                                        (click)="removeMaterialLine(i)">Remove</button>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        (click)="startUpdateMaterialLine(i)">Update</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Total Order Value:</strong></td>
+                                <td colspan="3"><strong>{{ totalOrderValue | number:'1.2-2' }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

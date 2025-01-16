@@ -27,10 +27,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let detail of orderDetails">
-                <td>{{ detail.material?.code }}</td>
-                <td>{{ detail.material?.shortText }}</td>
+                <td>{{ detail?.code }}</td>
+                <td>{{ detail?.shortText }}</td>
                 <td>{{ detail.itemQuantity }}</td>
-                <td>{{ detail.material?.unit }}</td>
+                <td>{{ detail?.unit }}</td>
                 <td>{{ detail.itemRate | currency }}</td>
                 <td>{{ detail.itemQuantity * detail.itemRate | currency }}</td>
                 <td>{{ detail.expectedDate | date: 'shortDate' }}</td>

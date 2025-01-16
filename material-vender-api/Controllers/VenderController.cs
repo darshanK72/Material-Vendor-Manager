@@ -1,6 +1,7 @@
 ﻿using material_vender_api.Models.Database;
 using material_vender_api.Models.Responses;
 using material_vender_api.Repository.Contracts;
+using material_vender_api.Repository.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace material_vender_api.Controllers
@@ -21,6 +22,16 @@ namespace material_vender_api.Controllers
         {
             var vendors = await _vendorService.GetAllVendorsAsync();
             return Ok(vendors);
+        }
+
+        [HttpGet("next-vendor-code")]
+        public async Task<ActionResult<CodeResponse>> GetMaterialNextCode()
+        {
+            var code = await _vendorService.GetNextVendorCodeAsync();
+            return Ok(new CodeResponse()
+            {
+                Code = code,
+            });
         }
 
         [HttpGet("{id}")]
@@ -53,6 +64,22 @@ namespace material_vender_api.Controllers
             }
 
             return CreatedAtAction("GetVendor", new { id = createdVendor.Id }, createdVendor);
+        }
+
+        [HttpPost("bulk-create")]
+        public async Task<ActionResult<bool>> PostBulkMaterials(List<Vendor> vendors)
+        {
+            var result = await _vendorService.AddBulkVendorsAsync(vendors);
+
+            if (!result)
+            {
+                return BadRequest(new ErrorResponse()
+                {
+                    ErrorMessage = "Failed to create new vendors."
+                });
+            }
+
+            return Ok("Created all vendors");
         }
 
         [HttpPut("{id}")]

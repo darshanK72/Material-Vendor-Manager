@@ -7,7 +7,7 @@ namespace material_vender_api.Models.Database
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public int OrderId { get; set; }

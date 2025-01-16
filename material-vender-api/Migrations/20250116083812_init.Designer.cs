@@ -12,7 +12,7 @@ using material_vender_api.Models.Database;
 namespace material_vender_api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250114101914_init")]
+    [Migration("20250116083812_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace material_vender_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("material_vender_api.Models.Material", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.Material", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace material_vender_api.Migrations
                     b.ToTable("Materials");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.PurchaseOrder", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.PurchaseOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,7 +103,7 @@ namespace material_vender_api.Migrations
                     b.ToTable("PurchaseOrders");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.PurchaseOrderDetail", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.PurchaseOrderDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +142,7 @@ namespace material_vender_api.Migrations
                     b.ToTable("PurchaseOrderDetails");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.Vendor", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.Vendor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -185,26 +185,26 @@ namespace material_vender_api.Migrations
                     b.ToTable("Vendors");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.PurchaseOrder", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.PurchaseOrder", b =>
                 {
-                    b.HasOne("material_vender_api.Models.Vendor", "Vendor")
+                    b.HasOne("material_vender_api.Models.Database.Vendor", "Vendor")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.PurchaseOrderDetail", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.PurchaseOrderDetail", b =>
                 {
-                    b.HasOne("material_vender_api.Models.Material", "Material")
+                    b.HasOne("material_vender_api.Models.Database.Material", "Material")
                         .WithMany()
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("material_vender_api.Models.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("material_vender_api.Models.Database.PurchaseOrder", "PurchaseOrder")
                         .WithMany("PurchaseOrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -215,12 +215,12 @@ namespace material_vender_api.Migrations
                     b.Navigation("PurchaseOrder");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.PurchaseOrder", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.PurchaseOrder", b =>
                 {
                     b.Navigation("PurchaseOrderDetails");
                 });
 
-            modelBuilder.Entity("material_vender_api.Models.Vendor", b =>
+            modelBuilder.Entity("material_vender_api.Models.Database.Vendor", b =>
                 {
                     b.Navigation("PurchaseOrders");
                 });

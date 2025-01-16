@@ -1,144 +1,140 @@
 <div class="container-fluid py-3">
-    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+    <!-- Order Header Form -->
+    <form [formGroup]="orderHeaderForm" (ngSubmit)="onSubmit()">
         <div class="card">
             <div class="card-header bg-white">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2 class="mb-0">Purchase Order Entry</h2>
                     <div>
-                        <button type="submit" class="btn btn-primary me-2" [disabled]="orderForm.invalid">Save</button>
+                        <button type="submit" class="btn btn-primary me-2" [disabled]="isSubmitting">Save</button>
                         <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <!-- Left Column -->
+                <!-- Order Header Section -->
+                <div class="row mb-4">
                     <div class="col-md-6">
-                        <!-- Order Number -->
                         <div class="mb-3">
-                            <label for="orderNumber" class="form-label">Order Number</label>
+                            <label for="orderNumber" class="form-label">Order No</label>
                             <input id="orderNumber" type="text" class="form-control" formControlName="orderNumber"
-                                [class.is-invalid]="formControls['orderNumber'].touched && formControls['orderNumber'].invalid" />
-                            <div *ngIf="formControls['orderNumber'].touched && formControls['orderNumber'].invalid"
-                                class="invalid-feedback">
-                                <small *ngIf="formControls['orderNumber'].errors?.['required']">Order Number is
-                                    required.</small>
+                                [class.is-invalid]="orderControls['orderNumber'].touched && orderControls['orderNumber'].invalid" />
+                            <div class="invalid-feedback"
+                                *ngIf="orderControls['orderNumber'].touched && orderControls['orderNumber'].errors?.['required']">
+                                Order Number is required
                             </div>
                         </div>
-
-                        <!-- Order Date -->
-                        <div class="mb-3">
-                            <label for="orderDate" class="form-label">Order Date</label>
-                            <input id="orderDate" type="date" class="form-control" formControlName="orderDate"
-                                [class.is-invalid]="formControls['orderDate'].touched && formControls['orderDate'].invalid" />
-                        </div>
-
-                        <!-- Vendor -->
                         <div class="mb-3">
                             <label for="vendorId" class="form-label">Vendor</label>
                             <select id="vendorId" class="form-select" formControlName="vendorId"
-                                [class.is-invalid]="formControls['vendorId'].touched && formControls['vendorId'].invalid">
+                                [class.is-invalid]="orderControls['vendorId'].touched && orderControls['vendorId'].invalid">
                                 <option value="">Select Vendor</option>
                                 <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
                             </select>
-                            <div *ngIf="formControls['vendorId'].touched && formControls['vendorId'].invalid"
-                                class="invalid-feedback">
-                                <small *ngIf="formControls['vendorId'].errors?.['required']">Vendor is required.</small>
+                            <div class="invalid-feedback"
+                                *ngIf="orderControls['vendorId'].touched && orderControls['vendorId'].errors?.['required']">
+                                Vendor is required
                             </div>
                         </div>
-
-                        <!-- Notes -->
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="orderDate" class="form-label">Order Date</label>
+                            <input id="orderDate" type="date" class="form-control" formControlName="orderDate" />
+                        </div>
                         <div class="mb-3">
                             <label for="notes" class="form-label">Notes</label>
                             <textarea id="notes" class="form-control" formControlName="notes" rows="3"></textarea>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Right Column -->
-                    <div class="col-md-6">
-                        <!-- Order Value -->
-                        <div class="mb-3">
-                            <label for="orderValue" class="form-label">Order Value</label>
-                            <input id="orderValue" type="number" class="form-control" formControlName="orderValue"
-                                [class.is-invalid]="formControls['orderValue'].touched && formControls['orderValue'].invalid" />
-                            <div *ngIf="formControls['orderValue'].touched && formControls['orderValue'].invalid"
-                                class="invalid-feedback">
-                                <small *ngIf="formControls['orderValue'].errors?.['required']">Order Value is
-                                    required.</small>
+                <!-- Material Line Entry Form -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ editingLineIndex !== null ? 'Update Material' : 'Add Material' }}</h5>
+                        <form [formGroup]="materialLineForm" class="row g-3">
+                            <div class="col-md-3">
+                                <label for="materialId" class="form-label">Material</label>
+                                <select id="materialId" class="form-select" formControlName="materialId" (change)="onMaterialSelect($event)"
+                                    [class.is-invalid]="materialControls['materialId'].touched && materialControls['materialId'].invalid">
+                                    <option value="">Select Material</option>
+                                    <option *ngFor="let material of materials" [value]="material.id">
+                                        {{ material.code }} - {{ material.shortText }}
+                                    </option>
+                                </select>
                             </div>
-                        </div>
-
-                        <!-- Order Status -->
-                        <div class="mb-3">
-                            <label for="orderStatus" class="form-label">Order Status</label>
-                            <input id="orderStatus" type="text" class="form-control" formControlName="orderStatus"
-                                [class.is-invalid]="formControls['orderStatus'].touched && formControls['orderStatus'].invalid" />
-                            <div *ngIf="formControls['orderStatus'].touched && formControls['orderStatus'].invalid"
-                                class="invalid-feedback">
-                                <small *ngIf="formControls['orderStatus'].errors?.['required']">Order Status is
-                                    required.</small>
+                            <div class="col-md-2">
+                                <label for="itemQuantity" class="form-label">Quantity</label>
+                                <input id="itemQuantity" type="number" class="form-control"
+                                    formControlName="itemQuantity" [min]="selectedMaterial?.minOrderQuantity || 0"
+                                    [class.is-invalid]="materialControls['itemQuantity'].touched && materialControls['itemQuantity'].invalid" />
+                                <div class="invalid-feedback"
+                                    *ngIf="materialControls['itemQuantity'].touched && materialControls['itemQuantity'].errors?.['min']">
+                                    Minimum quantity is {{ selectedMaterial?.minOrderQuantity }}
+                                </div>
                             </div>
-                        </div>
+                            <div class="col-md-2">
+                                <label for="itemRate" class="form-label">Rate</label>
+                                <input id="itemRate" type="number" class="form-control" formControlName="itemRate"
+                                    [class.is-invalid]="materialControls['itemRate'].touched && materialControls['itemRate'].invalid" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="expectedDate" class="form-label">Expected Date</label>
+                                <input id="expectedDate" type="date" class="form-control"
+                                    formControlName="expectedDate" />
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-success w-100" (click)="addMaterialLine()">
+                                    {{ editingLineIndex !== null ? 'Update Line' : 'Add Line' }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <!-- Order Item Entry -->
-                <div class="mt-4">
-                    <h5>Order Items</h5>
-
-                    <!-- Single Form for Adding Items -->
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="materialId" class="form-label">Material</label>
-                            <select id="materialId" class="form-select" formControlName="materialId">
-                                <option value="">Select Material</option>
-                                <option *ngFor="let material of materials" [value]="material.id">
-                                    {{ material.code }} - {{ material.shortText }}</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label for="itemQuantity" class="form-label">Quantity</label>
-                            <input id="itemQuantity" type="number" class="form-control"
-                                formControlName="itemQuantity" />
-                        </div>
-
-                        <div class="col-md-3">
-                            <label for="itemRate" class="form-label">Rate</label>
-                            <input id="itemRate" type="number" class="form-control" formControlName="itemRate" />
-                        </div>
-
-                        <div class="col-md-2 d-flex justify-content-center align-items-center">
-                            <button type="button" class="btn btn-success" (click)="addItem()">Add Item</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Added Items Table -->
-                <div class="mt-4">
-                    <h5>Added Items</h5>
+                <!-- Materials Table -->
+                <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Material</th>
+                                <th>Code</th>
+                                <th>Short Text</th>
+                                <th>Unit</th>
                                 <th>Quantity</th>
                                 <th>Rate</th>
-                                <th>Total</th>
-                                <th>Action</th>
+                                <th>Amount</th>
+                                <th>Exp Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let item of addedItems; let i = index">
-                                <td>{{ item.material?.code }} - {{ item.material?.shortText }}</td>
-                                <td>{{ item.itemQuantity }}</td>
-                                <td>{{ item.itemRate | currency }}</td>
-                                <td>{{ item.itemQuantity * item.itemRate | currency }}</td>
+                            <tr *ngFor="let line of orderLines; let i = index">
+                                <td>{{ line.material?.code }}</td>
+                                <td>{{ line.material?.shortText }}</td>
+                                <td>{{ line.material?.unit }}</td>
+                                <td>{{ line.itemQuantity }}</td>
+                                <td>{{ line.itemRate | number:'1.2-2' }}</td>
+                                <td>{{ line.itemQuantity * line.itemRate | number:'1.2-2' }}</td>
+                                <td>{{ line.expectedDate | date:'shortDate' }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        (click)="removeItemFromTable(i)">Remove</button>
+                                    <button type="button" class="btn btn-sm btn-danger me-1"
+                                        (click)="removeMaterialLine(i)">
+                                        Remove
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        (click)="startUpdateMaterialLine(i)">
+                                        Update
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Total Order Value:</strong></td>
+                                <td colspan="3"><strong>{{ totalOrderValue | number:'1.2-2' }}</strong></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

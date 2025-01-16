@@ -11,6 +11,7 @@ import { MaterialService } from 'src/app/services/material.service';
 export class MaterialCreateComponent implements OnInit {
   materialForm!: FormGroup;
   isSubmitting: boolean = false;
+  nextMaterialCode: any = 'MAT001';
 
   constructor(
     private fb: FormBuilder,
@@ -20,11 +21,20 @@ export class MaterialCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.materialService.getNextMaterialCode().subscribe((result) => {
+      this.nextMaterialCode = result.code;
+      this.materialForm.patchValue({
+        code:this.nextMaterialCode
+      })
+    });
   }
 
   private initializeForm(): void {
     this.materialForm = this.fb.group({
-      code: ['', [Validators.required, Validators.maxLength(50)]],
+      code: [
+        '',
+        [Validators.required, Validators.maxLength(50)],
+      ],
       shortText: ['', [Validators.required, Validators.maxLength(100)]],
       longText: ['', Validators.maxLength(500)],
       unit: ['', [Validators.required, Validators.maxLength(20)]],
@@ -46,6 +56,8 @@ export class MaterialCreateComponent implements OnInit {
       ],
       isActive: [true, Validators.required],
     });
+
+    this.materialForm.get('code')?.disable();
   }
 
   get formControls() {

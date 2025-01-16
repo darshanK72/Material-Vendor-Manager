@@ -12,9 +12,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <!-- Left Column -->
                     <div class="col-md-6">
-                        <!-- Code -->
                         <div class="mb-3">
                             <label for="code" class="form-label">Code</label>
                             <input id="code" type="text" class="form-control" formControlName="code"
@@ -26,8 +24,6 @@
                                     characters.</small>
                             </div>
                         </div>
-
-                        <!-- Name -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input id="name" type="text" class="form-control" formControlName="name"
@@ -39,47 +35,50 @@
                                     characters.</small>
                             </div>
                         </div>
-
-                        <!-- Address Line 1 -->
                         <div class="mb-3">
                             <label for="addressLine1" class="form-label">Address Line 1</label>
                             <input id="addressLine1" type="text" class="form-control" formControlName="addressLine1"
                                 [class.is-invalid]="formControls['addressLine1'].touched && formControls['addressLine1'].invalid" />
                         </div>
-
-                        <!-- Address Line 2 -->
                         <div class="mb-3">
                             <label for="addressLine2" class="form-label">Address Line 2</label>
                             <input id="addressLine2" type="text" class="form-control" formControlName="addressLine2"
                                 [class.is-invalid]="formControls['addressLine2'].touched && formControls['addressLine2'].invalid" />
                         </div>
                     </div>
-
-                    <!-- Right Column -->
                     <div class="col-md-6">
-                        <!-- Contact Email -->
                         <div class="mb-3">
                             <label for="contactEmail" class="form-label">Contact Email</label>
                             <input id="contactEmail" type="email" class="form-control" formControlName="contactEmail"
                                 [class.is-invalid]="formControls['contactEmail'].touched && formControls['contactEmail'].invalid" />
+                            <div *ngIf="formControls['contactEmail'].touched && formControls['contactEmail'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['contactEmail'].errors?.['required']">Email is
+                                    required.</small>
+                                <small *ngIf="formControls['contactEmail'].errors?.['email']">Email is not correct
+                                    format</small>
+                            </div>
                         </div>
-
-                        <!-- Contact No -->
                         <div class="mb-3">
                             <label for="contactNo" class="form-label">Contact No</label>
                             <input id="contactNo" type="text" class="form-control" formControlName="contactNo"
                                 [class.is-invalid]="formControls['contactNo'].touched && formControls['contactNo'].invalid" />
+                            <div *ngIf="formControls['contactNo'].touched && formControls['contactNo'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['contactNo'].errors?.['required']">Contact Number is
+                                    required.</small>
+                                <small *ngIf="formControls['contactNo'].errors?.['pattern']">Contact Number is not in
+                                    correct format.</small>
+                                <small *ngIf="formControls['contactNo'].errors?.['maxlength']">Contact Number canot be
+                                    greater than 10 digits.</small>
+                            </div>
                         </div>
-
-                        <!-- Valid Till Date -->
                         <div class="mb-3">
                             <label for="validTillDate" class="form-label">Valid Till Date</label>
                             <input id="validTillDate" type="date" class="form-control" formControlName="validTillDate"
                                 [class.is-invalid]="formControls['validTillDate'].touched && formControls['validTillDate'].invalid" />
                         </div>
-
-                        <!-- IsActive -->
-                        <div class="mt-3 mb-3">
+                        <div class="mt-5 mb-3">
                             <div class="form-check">
                                 <input id="isActive" type="checkbox" class="form-check-input"
                                     formControlName="isActive" />

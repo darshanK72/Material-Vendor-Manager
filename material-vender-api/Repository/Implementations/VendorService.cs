@@ -34,6 +34,30 @@ namespace material_vender_api.Repository.Implementations
             return vendor;
         }
 
+        public async Task<string> GetNextVendorCodeAsync()
+        {
+            var lastVendor = await _context.Vendors
+                                       .OrderBy(m => m.Id)
+                                       .LastOrDefaultAsync();
+
+            int newVendorId = lastVendor?.Id + 1 ?? 1;
+
+            string newVendorCode = $"VD{newVendorId:D4}";
+
+            return newVendorCode;
+        }
+
+        public async Task<bool> AddBulkVendorsAsync(List<Vendor> vendors)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                await _context.Vendors.AddRangeAsync(vendors);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateVendorAsync(int id, Vendor vendor)
         {
             if (id != vendor.Id)

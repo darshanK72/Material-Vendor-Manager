@@ -1,1 +1,102 @@
-<p>vendor-update works!</p>
+<div class="container-fluid py-3">
+    <form [formGroup]="vendorUpdateForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Vendor Update</h2>
+                    <div>
+                        <button type="submit" class="btn btn-primary me-2"
+                            [disabled]="vendorUpdateForm.invalid || isSubmitting || isLoading">Save</button>
+                        <button type="button" class="btn btn-secondary" [disabled]="isSubmitting"
+                            (click)="onCancel()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div *ngIf="isLoading" class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="mt-2">Loading vendor data...</div>
+                </div>
+
+                <div *ngIf="!isLoading" class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Code</label>
+                            <input id="code" type="text" class="form-control" formControlName="code"
+                                [class.is-invalid]="formControls['code'].touched && formControls['code'].invalid" />
+                            <div *ngIf="formControls['code'].touched && formControls['code'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['code'].errors?.['required']">Code is required.</small>
+                                <small *ngIf="formControls['code'].errors?.['maxlength']">Code cannot exceed 50
+                                    characters.</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input id="name" type="text" class="form-control" formControlName="name"
+                                [class.is-invalid]="formControls['name'].touched && formControls['name'].invalid" />
+                            <div *ngIf="formControls['name'].touched && formControls['name'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['name'].errors?.['required']">Name is required.</small>
+                                <small *ngIf="formControls['name'].errors?.['maxlength']">Name cannot exceed 100
+                                    characters.</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressLine1" class="form-label">Address Line 1</label>
+                            <input id="addressLine1" type="text" class="form-control" formControlName="addressLine1"
+                                [class.is-invalid]="formControls['addressLine1'].touched && formControls['addressLine1'].invalid" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressLine2" class="form-label">Address Line 2</label>
+                            <input id="addressLine2" type="text" class="form-control" formControlName="addressLine2"
+                                [class.is-invalid]="formControls['addressLine2'].touched && formControls['addressLine2'].invalid" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label">Contact Email</label>
+                            <input id="contactEmail" type="email" class="form-control" formControlName="contactEmail"
+                                [class.is-invalid]="formControls['contactEmail'].touched && formControls['contactEmail'].invalid" />
+                            <div *ngIf="formControls['contactEmail'].touched && formControls['contactEmail'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['contactEmail'].errors?.['required']">Email is
+                                    required.</small>
+                                <small *ngIf="formControls['contactEmail'].errors?.['email']">Email is not correct
+                                    format</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactNo" class="form-label">Contact No</label>
+                            <input id="contactNo" type="text" class="form-control" formControlName="contactNo"
+                                [class.is-invalid]="formControls['contactNo'].touched && formControls['contactNo'].invalid" />
+                            <div *ngIf="formControls['contactNo'].touched && formControls['contactNo'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['contactNo'].errors?.['required']">Contact Number is
+                                    required.</small>
+                                <small *ngIf="formControls['contactNo'].errors?.['pattern']">Contact Number is not in
+                                    correct format.</small>
+                                <small *ngIf="formControls['contactNo'].errors?.['maxlength']">Contact Number canot be
+                                    greater than 10 digits.</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="validTillDate" class="form-label">Valid Till Date</label>
+                            <input id="validTillDate" type="date" class="form-control" formControlName="validTillDate"
+                                [class.is-invalid]="formControls['validTillDate'].touched && formControls['validTillDate'].invalid" />
+                        </div>
+                        <div class="mt-5 mb-3">
+                            <div class="form-check">
+                                <input id="isActive" type="checkbox" class="form-check-input"
+                                    formControlName="isActive" />
+                                <label class="form-check-label" for="isActive">Is Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

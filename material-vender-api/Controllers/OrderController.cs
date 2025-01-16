@@ -1,4 +1,5 @@
 ﻿using material_vender_api.Models.Database;
+using material_vender_api.Models.DTOs;
 using material_vender_api.Models.Responses;
 using material_vender_api.Repository.Contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace material_vender_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PurchaseOrder>> GetPurchaseOrder([FromRoute] int id)
+        public async Task<ActionResult<OrderDTO>> GetPurchaseOrder([FromRoute] int id)
         {
             var purchaseOrder = await _orderService.GetPurchaseOrderByIdAsync(id);
 
@@ -37,8 +38,9 @@ namespace material_vender_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PurchaseOrder>> PostPurchaseOrder(PurchaseOrder purchaseOrder)
+        public async Task<ActionResult<PurchaseOrder>> PostPurchaseOrder(OrderDTO purchaseOrder)
         {
+
             var createdPurchaseOrder = await _orderService.AddPurchaseOrderAsync(purchaseOrder);
 
             if (createdPurchaseOrder == null)
@@ -53,9 +55,9 @@ namespace material_vender_api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> PutPurchaseOrder(int id, PurchaseOrder purchaseOrder)
+        public async Task<ActionResult<bool>> PutPurchaseOrder(int id, OrderDTO orderDTO)
         {
-            var result = await _orderService.UpdatePurchaseOrderAsync(id, purchaseOrder);
+            var result = await _orderService.UpdatePurchaseOrderAsync(id, orderDTO);
 
             if (!result)
             {

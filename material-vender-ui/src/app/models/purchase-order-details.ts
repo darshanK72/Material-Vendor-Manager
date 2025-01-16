@@ -2,7 +2,7 @@ import { Material } from "./material.model";
 import { PurchaseOrder } from "./purchase-order.model";
 
 export interface PurchaseOrderDetail {
-    id: number;
+    id?: number;
     orderId: number;
     materialId: number;
     itemQuantity: number;
@@ -11,5 +11,8 @@ export interface PurchaseOrderDetail {
     expectedDate?: Date;
     purchaseOrder?: PurchaseOrder;
     material?: Material;
+    code?: string;
+    unit?: string;
+    shortText?: string;
   }
   

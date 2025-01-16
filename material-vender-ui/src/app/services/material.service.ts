@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Material } from '../models/material.model';
 import { environment } from 'src/environments/environment.development';
+import { CodeResponse } from '../models/code.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,10 @@ export class MaterialService {
 
   getMaterialById(id: number): Observable<Material> {
     return this.http.get<Material>(`${this.baseUrl}/${id}`);
+  }
+
+  getNextMaterialCode(): Observable<CodeResponse> {
+    return this.http.get<CodeResponse>(`${this.baseUrl}/next-material-code`);
   }
 
   createMaterial(material: Material): Observable<Material> {
