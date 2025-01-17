@@ -1,7 +1,5 @@
 <div class="container mt-3">
     <h2 class="text-center mb-4">Order Details - {{ purchaseOrder?.orderNumber }}</h2>
-
-    <!-- Display Order Information -->
     <div *ngIf="purchaseOrder">
         <p><strong>Order Number:</strong> {{ purchaseOrder.orderNumber }}</p>
         <p><strong>Order Date:</strong> {{ purchaseOrder.orderDate | date: 'shortDate' }}</p>
@@ -9,8 +7,6 @@
         <p><strong>Status:</strong> {{ purchaseOrder.orderStatus }}</p>
         <p><strong>Vendor ID:</strong> {{ purchaseOrder.vendorId }}</p>
     </div>
-
-    <!-- Display Order Details (Materials) -->
     <h4 class="mt-4">Items in this Order</h4>
     <table class="table table-bordered table-hover">
         <thead class="table-dark">

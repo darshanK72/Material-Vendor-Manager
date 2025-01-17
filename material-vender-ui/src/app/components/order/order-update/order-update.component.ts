@@ -14,8 +14,8 @@ import { Vendor } from 'src/app/models/vender.model';
   styleUrls: ['./order-update.component.css'],
 })
 export class OrderUpdateComponent implements OnInit {
-  orderHeaderForm!: FormGroup;
-  materialLineForm!: FormGroup;
+  orderForm!: FormGroup;
+  materialForm!: FormGroup;
   vendors: Vendor[] = [];
   materials: Material[] = [];
   orderLines: PurchaseOrderDetail[] = [];
@@ -36,24 +36,15 @@ export class OrderUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const orderId = parseInt(this.route.snapshot.paramMap.get('id') || "0");
-    if (!orderId) {
-      alert('Invalid order ID.');
-      this.router.navigate(['/purchase-orders']);
-      return;
-    }
-
-    this.orderId = orderId
-
+    this.orderId = parseInt(this.route.snapshot.paramMap.get('id') || "0");
     this.initializeForms();
     this.loadVendors();
     this.loadMaterials();
-    this.loadOrderDetails(orderId);
-    this.setupMaterialChangeListener();
+    this.loadOrderDetails(this.orderId);
   }
 
   private initializeForms(): void {
-    this.orderHeaderForm = this.fb.group({
+    this.orderForm = this.fb.group({
       orderNumber: [{ value: '', disabled: true }, Validators.required],
       orderDate: [null, Validators.required],
       vendorId: ['', Validators.required],
@@ -62,20 +53,28 @@ export class OrderUpdateComponent implements OnInit {
       orderStatus: ['Draft'],
     });
 
-    this.materialLineForm = this.fb.group({
+    this.materialForm = this.fb.group({
       id:[''],
       materialId: ['', Validators.required],
-      itemNotes:['',Validators.required],
+      itemNotes:[''],
       itemQuantity: [{ value: 0, disabled: false }, [Validators.required]],
       itemRate: [null, [Validators.required, Validators.min(0.01)]],
       expectedDate: [new Date().toISOString().split('T')[0]],
     });
   }
 
+  private loadVendors(): void {
+    this.vendorService.getVendors().subscribe((vendors) => (this.vendors = vendors));
+  }
+
+  private loadMaterials(): void {
+    this.materialService.getMaterials().subscribe((materials) => (this.materials = materials));
+  }
+
   private loadOrderDetails(orderId: number): void {
     this.purchaseOrderService.getPurchaseOrderById(orderId).subscribe({
       next: (order) => {
-        this.orderHeaderForm.patchValue({
+        this.orderForm.patchValue({
           orderNumber: order.orderNumber,
           orderDate: this.formatDate(order.orderDate),
           vendorId: order.vendorId,
@@ -94,38 +93,17 @@ export class OrderUpdateComponent implements OnInit {
       },
     });
   }
-
-  private setupMaterialChangeListener(): void {
-    this.materialLineForm.get('materialId')?.valueChanges.subscribe((materialId) => {
-      if (materialId) {
-        const material = this.materials.find((m) => m.id === materialId);
-        if (material) {
-          this.selectedMaterial = material;
-          this.materialLineForm.patchValue({
-            itemQuantity: material.minOrderQuantity,
-          });
-
-          this.materialLineForm
-            .get('itemQuantity')
-            ?.setValidators([Validators.required, Validators.min(material.minOrderQuantity)]);
-          this.materialLineForm.get('itemQuantity')?.updateValueAndValidity();
-        }
-      } else {
-        this.selectedMaterial = null;
-      }
-    });
+  
+  get orderControls() {
+    return this.orderForm.controls;
   }
 
-  private loadVendors(): void {
-    this.vendorService.getVendors().subscribe((vendors) => (this.vendors = vendors));
-  }
-
-  private loadMaterials(): void {
-    this.materialService.getMaterials().subscribe((materials) => (this.materials = materials));
+  get materialControls() {
+    return this.materialForm.controls;
   }
 
   addMaterialLine(): void {
-    if (this.materialLineForm.invalid) {
+    if (this.materialForm.invalid) {
       Object.keys(this.materialControls).forEach((key) => {
         const control = this.materialControls[key];
         if (control.invalid) {
@@ -135,7 +113,7 @@ export class OrderUpdateComponent implements OnInit {
       return;
     }
 
-    const formValue = this.materialLineForm.value;
+    const formValue = this.materialForm.value;
     const material = this.materials.find((m) => m.id === parseInt(formValue.materialId));
 
     if (!material) return;
@@ -164,12 +142,46 @@ export class OrderUpdateComponent implements OnInit {
     this.resetMaterialForm();
   }
 
+  removeMaterialLine(index: number): void {
+    this.orderLines.splice(index, 1);
+    this.updateTotalValue();
+    if (this.editingLineIndex === index) {
+      this.resetMaterialForm();
+    }
+  }
+
+  startUpdateMaterialLine(index: number): void {
+    const line : any = this.orderLines[index];
+    this.editingLineIndex = index;
+    const material = this.materials.find((m) => m.id === parseInt(line.materialId));
+    this.selectedMaterial = material || null;
+    this.materialForm.patchValue({
+      materialId: line.materialId,
+    });
+
+    this.materialForm.patchValue({
+      itemQuantity: line.itemQuantity,
+      itemRate: line.itemRate,
+      expectedDate: this.formatDate(line.expectedDate),
+      itemNotes:line.itemNotes
+    });
+  }
+
   private resetMaterialForm(): void {
-    this.materialLineForm.reset({
+    this.materialForm.reset({
       expectedDate: new Date().toISOString().split('T')[0],
     });
     this.editingLineIndex = null;
     this.selectedMaterial = null;
+  }
+
+  onMaterialSelect(event: any) {
+    let materialId = event.target.value;
+    const material = this.materials.find((m) => m.id === parseInt(materialId));
+    this.selectedMaterial = material || null;
+    this.materialForm.patchValue({
+      itemQuantity: material?.minOrderQuantity,
+    });
   }
 
   private updateTotalValue(): void {
@@ -177,12 +189,12 @@ export class OrderUpdateComponent implements OnInit {
       (sum, line) => sum + line.itemQuantity * line.itemRate,
       0
     );
-    this.orderHeaderForm.patchValue({ orderValue: this.totalOrderValue });
+    this.orderForm.patchValue({ orderValue: this.totalOrderValue });
   }
-
+  
   onSubmit(): void {
-    if (this.orderHeaderForm.invalid || this.orderLines.length === 0) {
-      if (this.orderHeaderForm.invalid) {
+    if (this.orderForm.invalid || this.orderLines.length === 0) {
+      if (this.orderForm.invalid) {
         Object.keys(this.orderControls).forEach((key) => {
           const control = this.orderControls[key];
           if (control.invalid) {
@@ -196,7 +208,7 @@ export class OrderUpdateComponent implements OnInit {
 
     this.isSubmitting = true;
     const orderData = {
-      ...this.orderHeaderForm.getRawValue(),
+      ...this.orderForm.getRawValue(),
       orderValue: this.totalOrderValue,
       purchaseOrderDetails: this.orderLines,
       id: this.orderId
@@ -206,7 +218,7 @@ export class OrderUpdateComponent implements OnInit {
       next: () => {
         this.isSubmitting = false;
         alert('Purchase Order updated successfully!');
-        this.router.navigate(['/purchase-orders']);
+        this.router.navigate(['/orders']);
       },
       error: (error) => {
         this.isSubmitting = false;
@@ -216,56 +228,8 @@ export class OrderUpdateComponent implements OnInit {
     });
   }
 
-  removeMaterialLine(index: number): void {
-    this.orderLines.splice(index, 1);
-    this.updateTotalValue();
-    if (this.editingLineIndex === index) {
-      this.resetMaterialForm();
-    }
-  }
-
-  onMaterialSelect(event: any) {
-    let materialId = event.target.value;
-    const material = this.materials.find((m) => m.id === parseInt(materialId));
-    this.selectedMaterial = material || null;
-    this.materialLineForm.patchValue({
-      itemQuantity: material?.minOrderQuantity,
-    });
-    console.log(material);
-    console.log(materialId);
-    
-  }
-  startUpdateMaterialLine(index: number): void {
-    const line : any = this.orderLines[index];
-    this.editingLineIndex = index;
-    console.log(line);
-    const material = this.materials.find((m) => m.id === parseInt(line.materialId));
-    console.log(material);
-    this.selectedMaterial = material || null;
-    // Set the material first to trigger the change listener
-    this.materialLineForm.patchValue({
-      materialId: line.materialId,
-    });
-
-    // Then patch the rest of the values
-    this.materialLineForm.patchValue({
-      itemQuantity: line.itemQuantity,
-      itemRate: line.itemRate,
-      expectedDate: this.formatDate(line.expectedDate),
-      itemNotes:line.itemNotes
-    });
-  }
-
   onCancel(): void {
-    this.router.navigate(['/purchase-orders']);
-  }
-
-  get orderControls() {
-    return this.orderHeaderForm.controls;
-  }
-
-  get materialControls() {
-    return this.materialLineForm.controls;
+    this.router.navigate(['/orders']);
   }
 
   private formatDate(date:Date) {
@@ -277,4 +241,5 @@ export class OrderUpdateComponent implements OnInit {
     if (day.length < 2) day = '0' + day;
     return [year, month, day].join('-');
   }
+
 }

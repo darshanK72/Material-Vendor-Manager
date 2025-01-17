@@ -58,10 +58,14 @@ export class MaterialListComponent implements OnInit {
   deleteMaterial(materialId: number): void {
     const confirmDelete = confirm('Are you sure you want to delete this material?');
     if (confirmDelete) {
-      this.materials = this.materials.filter((material) => material.id !== materialId);
-      this.totalPages = Math.ceil(this.materials.length / this.itemsPerPage);
-      this.currentPage = Math.min(this.currentPage, this.totalPages); // Adjust current page
-      this.updatePaginatedMaterials();
+      this.materialService.deleteMaterial(materialId).subscribe({
+        next : (result) => {
+          this.fetchMaterials();
+      },
+        error: (error) => {
+          console.log(error);
+        }
+      })
     }
   }
 }

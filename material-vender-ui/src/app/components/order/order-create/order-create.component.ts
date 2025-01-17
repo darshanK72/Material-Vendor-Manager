@@ -14,8 +14,8 @@ import { PurchaseOrderDetail } from 'src/app/models/purchase-order-details';
   styleUrls: ['./order-create.component.css'],
 })
 export class OrderCreateComponent implements OnInit {
-  orderHeaderForm!: FormGroup;
-  materialLineForm!: FormGroup;
+  orderForm!: FormGroup;
+  materialForm!: FormGroup;
   vendors: Vendor[] = [];
   materials: Material[] = [];
   orderLines: PurchaseOrderDetail[] = [];
@@ -23,6 +23,7 @@ export class OrderCreateComponent implements OnInit {
   totalOrderValue: number = 0;
   editingLineIndex: number | null = null;
   selectedMaterial: Material | null = null;
+  nextOrderCode: string = "ORD0001";
 
   constructor(
     private fb: FormBuilder,
@@ -36,12 +37,17 @@ export class OrderCreateComponent implements OnInit {
     this.initializeForms();
     this.loadVendors();
     this.loadMaterials();
-    this.setupMaterialChangeListener();
+    this.purchaseOrderService.getNextOrderCode().subscribe((result) => {
+      this.nextOrderCode = result.code;
+      this.orderForm.patchValue({
+        orderNumber:this.nextOrderCode
+      })
+    });
   }
 
   private initializeForms(): void {
-    this.orderHeaderForm = this.fb.group({
-      orderNumber: ['', [Validators.required]],
+    this.orderForm = this.fb.group({
+      orderNumber: [{value : 0,disabled : true}, [Validators.required]],
       orderDate: [new Date().toISOString().split('T')[0], Validators.required],
       vendorId: ['', Validators.required],
       notes: [''],
@@ -49,60 +55,16 @@ export class OrderCreateComponent implements OnInit {
       orderStatus: ['Draft'],
     });
 
-    this.materialLineForm = this.fb.group({
+    this.materialForm = this.fb.group({
       id:[''],
       materialId: ['', Validators.required],
+      itemNotes:[''],
       itemQuantity: [{ value: 0, disabled: false }, [Validators.required]],
       itemRate: [null, [Validators.required, Validators.min(0.01)]],
       expectedDate: [new Date().toISOString().split('T')[0]],
     });
   }
-
-  onMaterialSelect(event: any) {
-    let materialId = event.target.value;
-    const material = this.materials.find((m) => m.id === parseInt(materialId));
-    this.selectedMaterial = material || null;
-    this.materialLineForm.patchValue({
-      itemQuantity: material?.minOrderQuantity,
-    });
-    
-  }
-
-  private setupMaterialChangeListener(): void {
-    this.materialLineForm
-      .get('materialId')
-      ?.valueChanges.subscribe((materialId) => {
-        if (materialId) {
-          const material = this.materials.find((m) => m.id === materialId);
-          if (material) {
-            this.selectedMaterial = material;
-            this.materialLineForm.patchValue({
-              itemQuantity: material.minOrderQuantity,
-            });
-
-            // Update validators for quantity
-            this.materialLineForm
-              .get('itemQuantity')
-              ?.setValidators([
-                Validators.required,
-                Validators.min(material.minOrderQuantity),
-              ]);
-            this.materialLineForm.get('itemQuantity')?.updateValueAndValidity();
-          }
-        } else {
-          this.selectedMaterial = null;
-        }
-      });
-  }
-
-  get orderControls() {
-    return this.orderHeaderForm.controls;
-  }
-
-  get materialControls() {
-    return this.materialLineForm.controls;
-  }
-
+  
   private loadVendors(): void {
     this.vendorService.getVendors().subscribe((vendors: Vendor[]) => {
       this.vendors = vendors;
@@ -115,8 +77,18 @@ export class OrderCreateComponent implements OnInit {
     });
   }
 
+  get orderControls() {
+    return this.orderForm.controls;
+  }
+
+  get materialControls() {
+    return this.materialForm.controls;
+  }
+
   addMaterialLine(): void {
-    if (this.materialLineForm.invalid) {
+
+    console.log(this.materialForm);
+    if (this.materialForm.invalid) {
       Object.keys(this.materialControls).forEach((key) => {
         const control = this.materialControls[key];
         if (control.invalid) {
@@ -126,9 +98,10 @@ export class OrderCreateComponent implements OnInit {
       return;
     }
 
-    const formValue = this.materialLineForm.value;
+    const formValue = this.materialForm.value;
+    console.log(formValue)
     const material = this.materials.find((m) => m.id === parseInt(formValue.materialId));
-
+    console.log(material);
     if (!material) return;
 
     const newLine: PurchaseOrderDetail = {
@@ -138,14 +111,16 @@ export class OrderCreateComponent implements OnInit {
       itemRate: formValue.itemRate,
       expectedDate: formValue.expectedDate,
       material: material,
+      code: material.code,
+      unit: material.unit,
+      shortText: material.shortText,
+      itemNotes:formValue.itemNotes
     };
 
     if (this.editingLineIndex !== null) {
-      // Update existing line
       this.orderLines[this.editingLineIndex] = newLine;
       this.editingLineIndex = null;
     } else {
-      // Add new line
       this.orderLines.push(newLine);
     }
 
@@ -164,42 +139,49 @@ export class OrderCreateComponent implements OnInit {
   startUpdateMaterialLine(index: number): void {
     const line : any = this.orderLines[index];
     this.editingLineIndex = index;
-    console.log(line);
     const material = this.materials.find((m) => m.id === parseInt(line.materialId));
-    console.log(material);
     this.selectedMaterial = material || null;
-    // Set the material first to trigger the change listener
-    this.materialLineForm.patchValue({
+    this.materialForm.patchValue({
       materialId: line.materialId,
     });
 
-    // Then patch the rest of the values
-    this.materialLineForm.patchValue({
+    this.materialForm.patchValue({
       itemQuantity: line.itemQuantity,
       itemRate: line.itemRate,
       expectedDate: line.expectedDate,
+      itemNotes:line.itemNotes
     });
   }
 
   private resetMaterialForm(): void {
-    this.materialLineForm.reset({
+    this.materialForm.reset({
       expectedDate: new Date().toISOString().split('T')[0],
     });
     this.editingLineIndex = null;
     this.selectedMaterial = null;
   }
 
+  onMaterialSelect(event: any) {
+    let materialId = event.target.value;
+    const material = this.materials.find((m) => m.id === parseInt(materialId));
+    this.selectedMaterial = material || null;
+    this.materialForm.patchValue({
+      itemQuantity: material?.minOrderQuantity,
+    });
+    
+  }
+ 
   private updateTotalValue(): void {
     this.totalOrderValue = this.orderLines.reduce(
       (sum, line) => sum + line.itemQuantity * line.itemRate,
       0
     );
-    this.orderHeaderForm.patchValue({ orderValue: this.totalOrderValue });
+    this.orderForm.patchValue({ orderValue: this.totalOrderValue });
   }
-
+  
   onSubmit(): void {
-    if (this.orderHeaderForm.invalid || this.orderLines.length === 0) {
-      if (this.orderHeaderForm.invalid) {
+    if (this.orderForm.invalid || this.orderLines.length === 0) {
+      if (this.orderForm.invalid) {
         Object.keys(this.orderControls).forEach((key) => {
           const control = this.orderControls[key];
           if (control.invalid) {
@@ -215,7 +197,7 @@ export class OrderCreateComponent implements OnInit {
 
     this.isSubmitting = true;
     const orderData = {
-      ...this.orderHeaderForm.getRawValue(),
+      ...this.orderForm.getRawValue(),
       orderValue: this.totalOrderValue,
       purchaseOrderDetails: this.orderLines,
     };
@@ -224,7 +206,7 @@ export class OrderCreateComponent implements OnInit {
       next: () => {
         this.isSubmitting = false;
         alert('Purchase Order created successfully!');
-        this.router.navigate(['/purchase-orders']);
+        this.router.navigate(['/orders']);
       },
       error: (error) => {
         this.isSubmitting = false;
@@ -235,6 +217,6 @@ export class OrderCreateComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/purchase-orders']);
+    this.router.navigate(['/orders']);
   }
 }

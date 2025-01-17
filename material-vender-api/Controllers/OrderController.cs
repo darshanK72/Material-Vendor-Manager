@@ -2,6 +2,7 @@
 using material_vender_api.Models.DTOs;
 using material_vender_api.Models.Responses;
 using material_vender_api.Repository.Contracts;
+using material_vender_api.Repository.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace material_vender_api.Controllers
@@ -36,6 +37,17 @@ namespace material_vender_api.Controllers
 
             return Ok(purchaseOrder);
         }
+
+        [HttpGet("next-order-code")]
+        public async Task<ActionResult<CodeResponse>> GetOrderNextCode()
+        {
+            var code = await _orderService.GetNextOrderCodeAsync();
+            return Ok(new CodeResponse()
+            {
+                Code = code,
+            });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<PurchaseOrder>> PostPurchaseOrder(OrderDTO purchaseOrder)

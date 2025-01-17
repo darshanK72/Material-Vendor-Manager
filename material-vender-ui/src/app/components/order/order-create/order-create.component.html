@@ -1,6 +1,5 @@
 <div class="container-fluid py-3">
-    <!-- Order Header Form -->
-    <form [formGroup]="orderHeaderForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
         <div class="card">
             <div class="card-header bg-white">
                 <div class="d-flex justify-content-between align-items-center">
@@ -12,17 +11,12 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- Order Header Section -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="orderNumber" class="form-label">Order No</label>
                             <input id="orderNumber" type="text" class="form-control" formControlName="orderNumber"
                                 [class.is-invalid]="orderControls['orderNumber'].touched && orderControls['orderNumber'].invalid" />
-                            <div class="invalid-feedback"
-                                *ngIf="orderControls['orderNumber'].touched && orderControls['orderNumber'].errors?.['required']">
-                                Order Number is required
-                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="vendorId" class="form-label">Vendor</label>
@@ -48,52 +42,57 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Material Line Entry Form -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">{{ editingLineIndex !== null ? 'Update Material' : 'Add Material' }}</h5>
-                        <form [formGroup]="materialLineForm" class="row g-3">
-                            <div class="col-md-3">
-                                <label for="materialId" class="form-label">Material</label>
-                                <select id="materialId" class="form-select" formControlName="materialId" (change)="onMaterialSelect($event)"
-                                    [class.is-invalid]="materialControls['materialId'].touched && materialControls['materialId'].invalid">
-                                    <option value="">Select Material</option>
-                                    <option *ngFor="let material of materials" [value]="material.id">
-                                        {{ material.code }} - {{ material.shortText }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="itemQuantity" class="form-label">Quantity</label>
-                                <input id="itemQuantity" type="number" class="form-control"
-                                    formControlName="itemQuantity" [min]="selectedMaterial?.minOrderQuantity || 0"
-                                    [class.is-invalid]="materialControls['itemQuantity'].touched && materialControls['itemQuantity'].invalid" />
-                                <div class="invalid-feedback"
-                                    *ngIf="materialControls['itemQuantity'].touched && materialControls['itemQuantity'].errors?.['min']">
-                                    Minimum quantity is {{ selectedMaterial?.minOrderQuantity }}
+                        <form [formGroup]="materialForm" class="row g-3 mt-3">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="materialId" class="form-label">Material</label>
+                                    <select id="materialId" class="form-select" formControlName="materialId"
+                                        (change)="onMaterialSelect($event)">
+                                        <option value="">Select Material</option>
+                                        <option *ngFor="let material of materials" [value]="material.id">
+                                            {{ material.code }} - {{ material.shortText }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="itemQuantity" class="form-label">Quantity</label>
+                                    <input id="itemQuantity" type="number" class="form-control"
+                                        formControlName="itemQuantity" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="itemRate" class="form-label">Rate</label>
+                                    <input id="itemRate" type="number" class="form-control"
+                                        formControlName="itemRate" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="expectedDate" class="form-label">Expected Date</label>
+                                    <input id="expectedDate" type="date" class="form-control"
+                                        formControlName="expectedDate" />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-success w-100" (click)="addMaterialLine()">
+                                        {{ editingLineIndex !== null ? 'Update Line' : 'Add Line' }}
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <label for="itemRate" class="form-label">Rate</label>
-                                <input id="itemRate" type="number" class="form-control" formControlName="itemRate"
-                                    [class.is-invalid]="materialControls['itemRate'].touched && materialControls['itemRate'].invalid" />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="expectedDate" class="form-label">Expected Date</label>
-                                <input id="expectedDate" type="date" class="form-control"
-                                    formControlName="expectedDate" />
-                            </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="button" class="btn btn-success w-100" (click)="addMaterialLine()">
-                                    {{ editingLineIndex !== null ? 'Update Line' : 'Add Line' }}
-                                </button>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="itemNotes" class="form-label">Item Notes</label>
+                                        <textarea id="itemNotes" class="form-control" formControlName="itemNotes"
+                                            rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
-
-                <!-- Materials Table -->
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>

@@ -13,24 +13,22 @@ export class OrderListComponent implements OnInit {
   paginatedOrders: PurchaseOrder[] = [];
   isLoading: boolean = true;
   currentPage: number = 1;
-  itemsPerPage: number = 5; // Number of items per page
+  itemsPerPage: number = 10;
   totalPages: number = 1;
 
-  constructor(private router:Router,private orderService:OrderService) {
-    
-  }
+  constructor(private router: Router, private orderService: OrderService) {}
 
   ngOnInit(): void {
     this.fetchOrders();
   }
 
   fetchOrders(): void {
-    this.orderService.getPurchaseOrders().subscribe(result => {
+    this.orderService.getPurchaseOrders().subscribe((result) => {
       this.orders = result;
       this.totalPages = Math.ceil(this.orders.length / this.itemsPerPage);
       this.updatePaginatedOrders();
       this.isLoading = false;
-    })
+    });
   }
 
   updatePaginatedOrders(): void {
@@ -53,10 +51,6 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  createOrder(): void {
-    alert('Navigate to the Create Order Page'); // Replace with routing logic
-  }
-
   updateOrder(orderId: number): void {
     this.router.navigate(['orders/update', orderId]);
   }
@@ -66,12 +60,18 @@ export class OrderListComponent implements OnInit {
   }
 
   deleteOrder(orderId: number): void {
-    const confirmDelete = confirm('Are you sure you want to delete this order?');
+    const confirmDelete = confirm(
+      'Are you sure you want to delete this order?'
+    );
     if (confirmDelete) {
-      this.orders = this.orders.filter((order) => order.id !== orderId);
-      this.totalPages = Math.ceil(this.orders.length / this.itemsPerPage);
-      this.currentPage = Math.min(this.currentPage, this.totalPages); // Adjust current page
-      this.updatePaginatedOrders();
+      this.orderService.deletePurchaseOrder(orderId).subscribe({
+        next : (result) => {
+          this.fetchOrders();
+      },
+        error: (error) => {
+          console.log(error);
+        }
+      })
     }
   }
 }

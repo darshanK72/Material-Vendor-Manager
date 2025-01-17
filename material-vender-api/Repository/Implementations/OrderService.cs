@@ -22,6 +22,20 @@ namespace material_vender_api.Repository.Implementations
                 .ToListAsync();
         }
 
+        public async Task<string> GetNextOrderCodeAsync()
+        {
+            var lastOrder = await _context.PurchaseOrders
+                                       .OrderBy(o => o.Id)
+                                       .LastOrDefaultAsync();
+
+            int newOrderId = lastOrder?.Id + 1 ?? 1;
+
+            string newOrderCode = $"ORD{newOrderId:D4}";
+
+            return newOrderCode;
+        }
+
+
         public async Task<OrderDTO> GetPurchaseOrderByIdAsync(int id)
         {
             var purchaseOrder =  await _context.PurchaseOrders
@@ -90,20 +104,16 @@ namespace material_vender_api.Repository.Implementations
                     }).ToList()
                 };
 
-                // Save the PurchaseOrder
                 await _context.PurchaseOrders.AddAsync(purchaseOrder);
                 await _context.SaveChangesAsync();
 
-                // PurchaseOrder.Id will now be generated after SaveChangesAsync
                 if (purchaseOrder.PurchaseOrderDetails != null && purchaseOrder.PurchaseOrderDetails.Any())
                 {
-                    // Set the OrderId for each PurchaseOrderDetail
                     foreach (var detail in purchaseOrder.PurchaseOrderDetails)
                     {
                         detail.OrderId = purchaseOrder.Id ?? 0;
                     }
 
-                    // Save the PurchaseOrderDetails
                     await _context.SaveChangesAsync();
                 }
 

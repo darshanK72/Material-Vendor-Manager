@@ -8,6 +8,7 @@ namespace material_vender_api.Repository.Contracts
     {
         Task<IEnumerable<PurchaseOrder>> GetAllPurchaseOrdersAsync();
         Task<OrderDTO> GetPurchaseOrderByIdAsync(int id);
+        Task<string> GetNextOrderCodeAsync();
         Task<PurchaseOrder> AddPurchaseOrderAsync(OrderDTO orderDto);
         Task<bool> UpdatePurchaseOrderAsync(int id, OrderDTO orderDto);
         Task<bool> DeletePurchaseOrderAsync(int id);

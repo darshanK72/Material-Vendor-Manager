@@ -63,7 +63,6 @@ export class VendorListComponent implements OnInit {
     if (confirmDelete) {
       this.vendorService.deleteVendor(vendorId).subscribe({
         next : (result) => {
-          console.log(result);
           this.fetchVendors();
       },
         error: (error) => {
