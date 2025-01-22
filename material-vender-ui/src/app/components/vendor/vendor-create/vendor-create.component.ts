@@ -62,6 +62,8 @@ export class VendorCreateComponent implements OnInit {
 
     this.isSubmitting = true;
     const vendor = this.vendorForm.value;
+    vendor.code = this.nextVendorCode;
+    console.log(vendor);
 
     this.vendorService.createVendor(vendor).subscribe({
       next: () => {

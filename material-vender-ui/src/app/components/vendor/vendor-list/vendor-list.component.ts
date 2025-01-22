@@ -66,7 +66,7 @@ export class VendorListComponent implements OnInit {
           this.fetchVendors();
       },
         error: (error) => {
-          console.log(error);
+          alert("Error While Deleting Vendor, Vender is in use");
         }
       })
     }

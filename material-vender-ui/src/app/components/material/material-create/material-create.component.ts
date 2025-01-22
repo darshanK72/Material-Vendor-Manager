@@ -71,6 +71,7 @@ export class MaterialCreateComponent implements OnInit {
 
     this.isSubmitting = true;
     const material = this.materialForm.value;
+    material.code = this.nextMaterialCode;
 
     this.materialService.createMaterial(material).subscribe({
       next: () => {

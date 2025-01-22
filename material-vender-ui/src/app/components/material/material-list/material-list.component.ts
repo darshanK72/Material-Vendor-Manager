@@ -63,7 +63,7 @@ export class MaterialListComponent implements OnInit {
           this.fetchMaterials();
       },
         error: (error) => {
-          console.log(error);
+          alert("Error in deleting material, material is in use");
         }
       })
     }
