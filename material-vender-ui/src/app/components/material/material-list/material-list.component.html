@@ -1,55 +1,72 @@
-<div class="small-font">
-    <div *ngIf="isLoading" class="text-center py-3">
+<div class="material-list-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="mt-2">Loading material data...</div>
+        <div class="loading-text">Loading materials...</div>
     </div>
-    <div class="container mt-2" *ngIf="!isLoading">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Material List</h2>
-            <button class="btn btn-primary" routerLink="create">Create Material</button>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading" class="content-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="title-section">
+                <h2><i class="fas fa-boxes me-2"></i>Materials</h2>
+                <p class="text-muted">Manage your material inventory</p>
+            </div>
+            <button class="btn btn-primary create-btn" routerLink="create">
+                <i class="fas fa-plus me-2"></i>Add Material
+            </button>
         </div>
 
-        <table class="table table-hover table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Code</th>
-                    <th>Short Description</th>
-                    <th>Long Description</th>
-                    <th>Unit</th>
-                    <th>Reorder Level</th>
-                    <th>Min Order Quantity</th>
-                    <th>Active</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let material of paginatedMaterials">
-                    <td>{{ material.id }}</td>
-                    <td>{{ material.code }}</td>
-                    <td>{{ material.shortText }}</td>
-                    <td>{{ material.longText || 'N/A' }}</td>
-                    <td>{{ material.unit }}</td>
-                    <td>{{ material.reorderLevel }}</td>
-                    <td>{{ material.minOrderQuantity }}</td>
-                    <td>{{ material.isActive ? 'Yes' : 'No' }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2"
-                            (click)="updateMaterial(material.id)">Update</button>
-                        <button class="btn btn-danger btn-sm" (click)="deleteMaterial(material.id)">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Materials Grid -->
+        <div class="materials-grid">
+            <div *ngFor="let material of paginatedMaterials" class="material-card">
+                <div class="card-header">
+                    <div class="material-code">{{ material.code }}</div>
+                    <div class="material-status" [class.active]="material.isActive">
+                        {{ material.isActive ? 'Active' : 'Inactive' }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="material-title">{{ material.shortText }}</h5>
+                    <p class="material-description">{{ material.longText || 'No description available' }}</p>
+                    <div class="material-details">
+                        <div class="detail-item">
+                            <i class="fas fa-ruler"></i>
+                            <span>{{ material.unit }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Reorder: {{ material.reorderLevel }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Min Order: {{ material.minOrderQuantity }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-outline-primary me-2" (click)="updateMaterial(material.id)">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deleteMaterial(material.id)">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <button class="btn btn-secondary btn-sm" [disabled]="currentPage === 1"
-                (click)="previousPage()">Previous</button>
-            <span>Page {{ currentPage }} of {{ totalPages }}</span>
-            <button class="btn btn-secondary btn-sm" [disabled]="currentPage === totalPages"
-                (click)="nextPage()">Next</button>
+        <!-- Pagination -->
+        <div class="pagination-section">
+            <button class="btn btn-outline-secondary" [disabled]="currentPage === 1" (click)="previousPage()">
+                <i class="fas fa-chevron-left me-1"></i>Previous
+            </button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="btn btn-outline-secondary" [disabled]="currentPage === totalPages" (click)="nextPage()">
+                Next<i class="fas fa-chevron-right ms-1"></i>
+            </button>
         </div>
     </div>
 </div>

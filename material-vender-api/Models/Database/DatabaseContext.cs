@@ -13,6 +13,7 @@ namespace material_vender_api.Models.Database
         public DbSet<Material> Materials { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PurchaseOrder>()
@@ -32,6 +33,14 @@ namespace material_vender_api.Models.Database
                 .WithMany()
                 .HasForeignKey(pod => pod.MaterialId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
 
     }

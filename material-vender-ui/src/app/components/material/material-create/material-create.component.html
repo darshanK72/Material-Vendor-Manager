@@ -1,102 +1,129 @@
-<div class="container-fluid py-3">
+<div class="material-form-container">
     <form [formGroup]="materialForm" (ngSubmit)="onSubmit()">
-        <div class="card">
-            <div class="card-header bg-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">Material Entry</h2>
-                    <div>
-                        <button type="submit" class="btn btn-primary me-2"
-                            [disabled]="materialForm.invalid">Save</button>
-                        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-                    </div>
+        <div class="form-card">
+            <div class="form-header">
+                <div class="header-content">
+                    <h2><i class="fas fa-plus-circle me-2"></i>Add New Material</h2>
+                    <p class="text-muted">Fill in the details to create a new material</p>
+                </div>
+                <div class="header-actions">
+                    <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="materialForm.invalid">
+                        <i class="fas fa-save me-1"></i>Save Material
+                    </button>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="code" class="form-label">Code</label>
-                            <input id="code" type="text" class="form-control" formControlName="code"
-                                [class.is-invalid]="formControls['code'].touched && formControls['code'].invalid" />
+
+            <div class="form-body">
+                <div class="form-row">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle me-2"></i>Basic Information
+                        </h3>
+                        <div class="form-group">
+                            <label for="code" class="form-label">Material Code</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                <input id="code" type="text" class="form-control" formControlName="code"
+                                    [class.is-invalid]="formControls['code'].touched && formControls['code'].invalid"
+                                    placeholder="Enter material code" />
+                            </div>
                             <div *ngIf="formControls['code'].touched && formControls['code'].invalid"
                                 class="invalid-feedback">
                                 <small *ngIf="formControls['code'].errors?.['required']">Code is required.</small>
-                                <small *ngIf="formControls['code'].errors?.['maxlength']">Code cannot exceed 50
-                                    characters.</small>
+                                <small *ngIf="formControls['code'].errors?.['maxlength']">Code cannot exceed 50 characters.</small>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="shortText" class="form-label">Short Text</label>
-                            <input id="shortText" type="text" class="form-control" formControlName="shortText"
-                                [class.is-invalid]="formControls['shortText'].touched && formControls['shortText'].invalid" />
+
+                        <div class="form-group">
+                            <label for="shortText" class="form-label">Short Description</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                <input id="shortText" type="text" class="form-control" formControlName="shortText"
+                                    [class.is-invalid]="formControls['shortText'].touched && formControls['shortText'].invalid"
+                                    placeholder="Enter short description" />
+                            </div>
                             <div *ngIf="formControls['shortText'].touched && formControls['shortText'].invalid"
                                 class="invalid-feedback">
-                                <small *ngIf="formControls['shortText'].errors?.['required']">Short Text is
-                                    required.</small>
-                                <small *ngIf="formControls['shortText'].errors?.['maxlength']">Short Text cannot exceed
-                                    100 characters.</small>
+                                <small *ngIf="formControls['shortText'].errors?.['required']">Short description is required.</small>
+                                <small *ngIf="formControls['shortText'].errors?.['maxlength']">Short description cannot exceed 100 characters.</small>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="unit" class="form-label">Unit</label>
-                            <input id="unit" type="text" class="form-control" formControlName="unit"
-                                [class.is-invalid]="formControls['unit'].touched && formControls['unit'].invalid" />
-                            <div *ngIf="formControls['unit'].touched && formControls['unit'].invalid"
+
+                        <div class="form-group">
+                            <label for="longText" class="form-label">Long Description</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                                <textarea id="longText" class="form-control" formControlName="longText" rows="2"
+                                    [class.is-invalid]="formControls['longText'].touched && formControls['longText'].invalid"
+                                    placeholder="Enter detailed description"></textarea>
+                            </div>
+                            <div *ngIf="formControls['longText'].touched && formControls['longText'].invalid"
                                 class="invalid-feedback">
-                                <small *ngIf="formControls['unit'].errors?.['required']">Unit is required.</small>
+                                <small *ngIf="formControls['longText'].errors?.['maxlength']">Long description cannot exceed 500 characters.</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="longText" class="form-label">Long Text</label>
-                            <textarea id="longText" class="form-control" formControlName="longText" rows="2"
-                                [class.is-invalid]="formControls['longText'].touched && formControls['longText'].invalid"></textarea>
-                            <div *ngIf="formControls['longText'].touched && formControls['longText'].invalid"
+
+                    <!-- Specifications -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-cogs me-2"></i>Specifications
+                        </h3>
+                        <div class="form-group">
+                            <label for="unit" class="form-label">Unit of Measurement</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                                <input id="unit" type="text" class="form-control" formControlName="unit"
+                                    [class.is-invalid]="formControls['unit'].touched && formControls['unit'].invalid"
+                                    placeholder="e.g., kg, pcs, m" />
+                            </div>
+                            <div *ngIf="formControls['unit'].touched && formControls['unit'].invalid"
                                 class="invalid-feedback">
-                                <small *ngIf="formControls['longText'].errors?.['maxlength']">Long Text cannot exceed
-                                    500 characters.</small>
+                                <small *ngIf="formControls['unit'].errors?.['required']">Unit is required.</small>
+                                <small *ngIf="formControls['unit'].errors?.['maxlength']">Unit cannot exceed 20 characters.</small>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="reorderLevel" class="form-label">Reorder Level</label>
-                                    <input id="reorderLevel" type="number" class="form-control"
-                                        formControlName="reorderLevel"
-                                        [class.is-invalid]="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid" />
-                                    <div *ngIf="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid"
-                                        class="invalid-feedback">
-                                        <small *ngIf="formControls['reorderLevel'].errors?.['required']">Reorder Level
-                                            is required.</small>
-                                        <small *ngIf="formControls['reorderLevel'].errors?.['min']">Reorder Level must
-                                            be at least 0.</small>
-                                    </div>
-                                </div>
+                        <div class="form-group">
+                            <label for="reorderLevel" class="form-label">Reorder Level</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-exclamation-triangle"></i></span>
+                                <input id="reorderLevel" type="number" class="form-control" formControlName="reorderLevel"
+                                    [class.is-invalid]="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid"
+                                    placeholder="Enter reorder level" />
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="minOrderQuantity" class="form-label">Min Order Quantity</label>
-                                    <input id="minOrderQuantity" type="number" class="form-control"
-                                        formControlName="minOrderQuantity"
-                                        [class.is-invalid]="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid" />
-                                    <div *ngIf="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid"
-                                        class="invalid-feedback">
-                                        <small *ngIf="formControls['minOrderQuantity'].errors?.['required']">Min Order
-                                            Quantity is required.</small>
-                                        <small *ngIf="formControls['minOrderQuantity'].errors?.['min']">Min Order
-                                            Quantity must be at least 0.</small>
-                                    </div>
-                                </div>
+                            <div *ngIf="formControls['reorderLevel'].touched && formControls['reorderLevel'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['reorderLevel'].errors?.['required']">Reorder level is required.</small>
+                                <small *ngIf="formControls['reorderLevel'].errors?.['min']">Reorder level must be at least 0.</small>
                             </div>
                         </div>
 
-                        <div class="mt-3 mb-3">
+                        <div class="form-group">
+                            <label for="minOrderQuantity" class="form-label">Minimum Order Quantity</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-shopping-cart"></i></span>
+                                <input id="minOrderQuantity" type="number" class="form-control" formControlName="minOrderQuantity"
+                                    [class.is-invalid]="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid"
+                                    placeholder="Enter minimum order quantity" />
+                            </div>
+                            <div *ngIf="formControls['minOrderQuantity'].touched && formControls['minOrderQuantity'].invalid"
+                                class="invalid-feedback">
+                                <small *ngIf="formControls['minOrderQuantity'].errors?.['required']">Minimum order quantity is required.</small>
+                                <small *ngIf="formControls['minOrderQuantity'].errors?.['min']">Minimum order quantity must be at least 0.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <div class="form-check">
-                                <input id="isActive" type="checkbox" class="form-check-input"
-                                    formControlName="isActive" />
-                                <label class="form-check-label" for="isActive">Is Active</label>
+                                <input id="isActive" type="checkbox" class="form-check-input" formControlName="isActive" />
+                                <label class="form-check-label" for="isActive">
+                                    <i class="fas fa-check-circle me-1"></i>Active Material
+                                </label>
                             </div>
                         </div>
                     </div>

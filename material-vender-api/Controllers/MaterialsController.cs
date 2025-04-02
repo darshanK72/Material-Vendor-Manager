@@ -1,12 +1,14 @@
 ﻿using material_vender_api.Models.Database;
 using material_vender_api.Models.Responses;
 using material_vender_api.Repository.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace material_vender_api.Controllers
 {
     [Route("api/materials")]
     [ApiController]
+    [Authorize]
     public class MaterialsController : ControllerBase
     {
         private readonly IMaterialService _materialService;

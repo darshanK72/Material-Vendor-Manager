@@ -12,9 +12,14 @@ import { VendorUpdateComponent } from './components/vendor/vendor-update/vendor-
 import { OrderUpdateComponent } from './components/order/order-update/order-update.component';
 import { OrderDetailsComponent } from './components/order/order-details/order-details.component';
 import { OrderListComponent } from './components/order/order-list/order-list.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { VendorCreateComponent } from './components/vendor/vendor-create/vendor-create.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { HomeComponent } from './components/home/home.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -29,6 +34,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     VendorListComponent,
     VendorUpdateComponent,
     VendorCreateComponent,
+    LoginComponent,
+    RegisterComponent,
+    DashboardComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +46,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
